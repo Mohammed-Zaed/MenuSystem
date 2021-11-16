@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdint.h>
+#include "config.h"
 
 class iMenu 
 {
@@ -71,16 +72,10 @@ class MenuLoader : public iMenu
         virtual bool
         handle (uint8_t command)
         {
-            std::cout << "User input : " << command << std::endl;
-
             bool isSuccess = m_menuList[m_currentPage]->handle(command);
-
-            std::cout << "isSuccess : " << isSuccess << std::endl;
 
             if (false == isSuccess)
             {
-                std::cout << "Handle in Menu loader" << std::endl;
-
                 switch (command)
                 {
                     case 'n' :
@@ -170,6 +165,7 @@ class MenuLoader : public iMenu
 int 
 main ()
 {
+    std::cout << "Menu System: " << STR_VERSION << std::endl;
     FirstMenu firstMenu;
     SecondMenu SecondMenu;
 
@@ -179,14 +175,14 @@ main ()
     menuLoader.addMenu(&SecondMenu);
 
     bool isContinue = true;
+    
     while (isContinue)
     {
         menuLoader.display();
         uint8_t cmd = 0;
         std::cin >> cmd;
         isContinue = menuLoader.handle(cmd);
-
     }
     
-    return 0;
+    return 0U;
 }

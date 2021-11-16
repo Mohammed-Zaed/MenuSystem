@@ -1,0 +1,9 @@
+// the configured options and settings for Menu
+#define Menu_VERSION_MAJOR @Menu_VERSION_MAJOR@
+#define Menu_VERSION_MINOR @Menu_VERSION_MINOR@
+#define Menu_VERSION    Menu_VERSION_MAJOR.Menu_VERSION_MINOR
+
+#define TO_STRING1(x)   #x
+#define TO_STRING(x)    TO_STRING1(x)
+
+#define STR_VERSION     TO_STRING(Menu_VERSION)
