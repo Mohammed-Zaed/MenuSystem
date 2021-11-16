@@ -1,181 +1,97 @@
 #include <iostream>
-#include <stdint.h>
 #include "config.h"
-
-class iMenu 
-{
-    public:
-        virtual void display() = 0;
-        virtual bool handle(uint8_t command) = 0;
-};
+#include "iMenu.h"
+#include "menuloader.h"
 
 
+// Creating Menu Pages : FirstMenu and SecondMenu
 class FirstMenu : public iMenu
 {
     public:
-        virtual void display() { std::cout << "First Menu" << std::endl; }
-        virtual bool handle(uint8_t command) { std::cout << "First Menu handler" << std::endl; return false;}
+        virtual void display()
+            {
+                std::cout << "\n--------------------------" << std::endl;
+                std::cout << "Welcome to First Menu Page" << std::endl;
+                std::cout << "Press 'm' for message" << std::endl;
+                std::cout << "--------------------------" << std::endl;
+            }
+
+        virtual bool handle(uint8_t command) 
+        {
+            bool ret = false;
+
+            switch (command)
+            {
+                case 'm':
+                    {
+                        std::cout << "Hi! from first menu page" << std::endl;
+                        ret = true;
+                    }
+                    break;
+
+                default:
+                    {
+                        ret = false;
+                    }
+                    break;
+            }
+
+            return ret;
+        }
 };
 
 class SecondMenu : public iMenu
 {
     public:
-        virtual void display() { std::cout << "Second Menu" << std::endl; }
-        virtual bool handle(uint8_t command) { std::cout << "Second Menu handler" << std::endl; return false;}
+        virtual void display()
+            {
+                std::cout << "\n--------------------------" << std::endl;
+                std::cout << "Welcome to Second Menu Page" << std::endl;
+                std::cout << "Press 'm' for message" << std::endl;
+                std::cout << "--------------------------" << std::endl;
+            }
+
+        virtual bool handle(uint8_t command) 
+        {
+            bool ret = false;
+
+            switch (command)
+            {
+                case 'm':
+                    {
+                        std::cout << "Hi! from second menu page" << std::endl;
+                        ret = true;
+                    }
+                    break;
+
+                default:
+                    {
+                        ret = false;
+                    }
+                    break;
+            }
+
+            return ret;
+        }
 };
-
-template <unsigned int size>
-class MenuLoader : public iMenu
-{
-    public:
-        MenuLoader ()
-        : m_maxNumOfPages(size),
-          m_pageCounter(0U),
-          m_currentPage(0U)
-        {
-            std::cout << "Num of Pages in menu: " << size << std::endl;
-        };
-
-        virtual 
-        ~MenuLoader ()
-        {
-
-        }
-
-        void
-        addMenu (iMenu* menu)
-        {
-            if (!isListFull())
-            {
-                m_menuList[m_pageCounter] = menu;
-                ++m_pageCounter;
-            }
-            else
-            {
-                std::cout << "Menu > Error : Cannot be added, list full" << std::endl;
-            }
-        }
-
-        virtual void
-        display ()
-        {
-            if (isPageValid())
-            m_menuList[m_currentPage]->display();
-
-            //Menu handling information
-            std::cout << "Press 'n' for next page" << std::endl;
-            std::cout << "Press 'p' for previous page" << std::endl;
-            std::cout << "Press 'q' for quitting" << std::endl;
-            std::cout << "Page : " << +m_currentPage << " of " << +m_pageCounter << std::endl;
-        }
-
-        virtual bool
-        handle (uint8_t command)
-        {
-            bool isSuccess = m_menuList[m_currentPage]->handle(command);
-
-            if (false == isSuccess)
-            {
-                switch (command)
-                {
-                    case 'n' :
-                    {
-                        next();
-                        isSuccess = true;
-                    }
-                    break;
-
-                    case 'p' :
-                    {
-                        previous();
-                        isSuccess = true;
-                    }
-                    break;
-
-                    case 'q' :
-                    {
-                        isSuccess = false;
-                    }
-                    break;
-
-                    default :
-                    {
-                        std::cout << "Invalid choice" << std::endl;
-                        isSuccess = true;
-                    }
-                    break;
-                }
-
-                
-            }
-
-            return isSuccess;
-        }
-
-        void 
-        next ()
-        {
-            goToNextPage();
-            display();
-        }
-
-        void 
-        previous ()
-        {
-            goToPreviousPage();
-            display();
-        }
-
-    private:
-        bool
-        isPageValid () const
-        {
-            return (m_pageCounter > 0) && (m_pageCounter < m_maxNumOfPages); 
-        }
-
-        bool
-        isListFull () const
-        {
-            return !((m_pageCounter >= 0) && (m_pageCounter < m_maxNumOfPages));
-        }
-
-        void
-        goToNextPage ()
-        {
-            m_currentPage = ++m_currentPage % m_pageCounter;
-        }
-
-        void
-        goToPreviousPage ()
-        {
-            m_currentPage = --m_currentPage % m_pageCounter;
-        }
-
-
-    private:
-        const uint8_t m_maxNumOfPages;
-
-        uint8_t m_pageCounter;
-        uint8_t m_currentPage;
-
-        iMenu* m_menuList[size];
-};
-
 
 int 
 main ()
 {
-    std::cout << "Menu System: " << STR_VERSION << std::endl;
+    // Instantiate Menu Pages
     FirstMenu firstMenu;
     SecondMenu SecondMenu;
 
-    MenuLoader <10> menuLoader;
+    // Instantiate Menu loader class with required page size and number of characters in header text.
+    MenuLoader <10, 10> menuLoader("DEMO CODE");
 
+    // Add Menu pages to menu loader class
     menuLoader.addMenu(&firstMenu);
     menuLoader.addMenu(&SecondMenu);
 
     bool isContinue = true;
-    
+
+    // Display menu
     while (isContinue)
     {
         menuLoader.display();
