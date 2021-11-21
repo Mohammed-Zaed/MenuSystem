@@ -1,3 +1,6 @@
+#include <iostream>
+#include <cstring>
+
 template <unsigned int size, unsigned int titleLength>
 class MenuLoader : public iMenu
 {
